@@ -2,6 +2,7 @@ require "selenium-webdriver"
 require_relative "get_link_async.rb"
 require_relative "database/combinacao.rb"
 require_relative "database/aposta.rb"
+require_relative "manager.rb"
 
 driver = Selenium::WebDriver.for :chrome
 driver2 = Selenium::WebDriver.for :chrome
@@ -19,7 +20,7 @@ begin
   input = driver.find_element(name: "betburger_user[email]").send_keys "valdirmdico@hotmail.com"
   password = driver.find_element(name: "betburger_user[password]").send_keys "Dico240966!", :return
   # incluir o email e senha depois :return para que o enter seja pressionado
-  sleep 3000
+  sleep 3
 
   driver.get "https://www.betburger.com/arbs"
 
@@ -48,6 +49,10 @@ begin
 
       link = p.find_element(tag_name: "a") #.attribute('href') # pegar link da aposta no betburger
 
+      p "title: #{link.attribute('href')}"
+'''
+      sleep 100000
+
       original_window = driver.window_handle # pegar a janela original
       link.click # clicar no link da aposta
 
@@ -66,14 +71,14 @@ begin
           driver.switch_to.window original_window
           break
         end
-      end
+'''
 
       sleep 2
 
       if count == 1
-        aposta1 = db_aposta.insert(title, odd, link_certo) #{ title: title, link: link_certo, odd: odd }
+        aposta1 = db_aposta.insert(title, odd, link.attribute('href')) #{ title: title, link: link_certo, odd: odd }
       elsif count == 2
-        aposta2 = db_aposta.insert(title, odd, link_certo) #{ title: title, link: link_certo, odd: odd }
+        aposta2 = db_aposta.insert(title, odd, link.attribute('href')) #{ title: title, link: link_certo, odd: odd }
       end
       puts "count: #{count}"
       sleep 5
@@ -89,6 +94,7 @@ begin
 
   sleep 10000
 ensure
+  Manager.new
   driver.quit
   puts "driver quited"
 end

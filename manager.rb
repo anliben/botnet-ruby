@@ -6,6 +6,7 @@ require_relative 'database/aposta.rb'
 class Manager
 
   attr_accessor :platforms, :db_aposta, :db_comb
+
   def initialize
     @platforms = %w[bet365 pinnacle 1xbet betway leonbets marathonbet betfair rivalo]
     @db_aposta = Aposta.new
